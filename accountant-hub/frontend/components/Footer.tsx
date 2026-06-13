@@ -33,8 +33,8 @@ export default function Footer() {
             <h4 className="text-sm font-semibold">Find Talent</h4>
             <ul className="mt-3 flex flex-col gap-2 text-sm text-white/60">
               <li><Link href="/" className="hover:text-white transition-colors">Browse Jobs</Link></li>
-              <li><Link href="/" className="hover:text-white transition-colors">Categories</Link></li>
-              <li><Link href="/" className="hover:text-white transition-colors">Top Accountants</Link></li>
+              <li><Link href="/categories" className="hover:text-white transition-colors">Categories</Link></li>
+              <li><Link href="/accountants" className="hover:text-white transition-colors">Top Accountants</Link></li>
             </ul>
           </div>
 
@@ -42,9 +42,9 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-semibold">Find Work</h4>
             <ul className="mt-3 flex flex-col gap-2 text-sm text-white/60">
-              <li><Link href="/" className="hover:text-white transition-colors">How It Works</Link></li>
-              <li><Link href="/" className="hover:text-white transition-colors">Success Stories</Link></li>
-              <li><Link href="/" className="hover:text-white transition-colors">Resources</Link></li>
+              <li><Link href="/how-it-works" className="hover:text-white transition-colors">How It Works</Link></li>
+              <li><Link href="/success-stories" className="hover:text-white transition-colors">Success Stories</Link></li>
+              <li><Link href="/resources" className="hover:text-white transition-colors">Resources</Link></li>
             </ul>
           </div>
 
@@ -52,9 +52,9 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-semibold">Company</h4>
             <ul className="mt-3 flex flex-col gap-2 text-sm text-white/60">
-              <li><Link href="/" className="hover:text-white transition-colors">About</Link></li>
-              <li><Link href="/" className="hover:text-white transition-colors">Careers</Link></li>
-              <li><Link href="/" className="hover:text-white transition-colors">Contact</Link></li>
+              <li><Link href="/about" className="hover:text-white transition-colors">About</Link></li>
+              <li><Link href="/careers" className="hover:text-white transition-colors">Careers</Link></li>
+              <li><Link href="/contact" className="hover:text-white transition-colors">Contact</Link></li>
             </ul>
           </div>
         </div>

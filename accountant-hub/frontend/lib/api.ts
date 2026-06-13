@@ -1,4 +1,4 @@
-import type { ApiResponse, Bid, JobDetail, JobListItem } from "@/types";
+import type { ApiResponse, Bid, JobDetail, JobListItem, PricingTier, AccountantProfile, SuccessStoryItem, ResourceArticle, CareerPosition } from "@/types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
@@ -99,4 +99,37 @@ export async function submitBid(jobId: string, data: {
 
 export async function getMyBids(page = 1) {
   return request<Bid[]>(`/my-bids?page=${page}`);
+}
+
+// Pricing
+export async function getPricing() {
+  return request<PricingTier[]>("/pricing");
+}
+
+// Accountants
+export async function getTopAccountants() {
+  return request<AccountantProfile[]>("/accountants/top");
+}
+
+// Success Stories
+export async function getSuccessStories() {
+  return request<SuccessStoryItem[]>("/success-stories");
+}
+
+// Resources
+export async function getResources() {
+  return request<ResourceArticle[]>("/resources");
+}
+
+// Careers
+export async function getCareers() {
+  return request<CareerPosition[]>("/careers");
+}
+
+// Contact
+export async function submitContact(data: { name: string; email: string; subject: string; message: string }) {
+  return request<null>("/contact", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 }

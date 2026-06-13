@@ -13,6 +13,10 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             JobSeeder::class,
             BidSeeder::class,
+            AccountantSeeder::class,
+            SuccessStorySeeder::class,
+            ResourceSeeder::class,
+            CareerSeeder::class,
         ]);
     }
 }

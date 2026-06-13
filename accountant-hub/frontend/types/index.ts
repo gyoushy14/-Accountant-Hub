@@ -66,3 +66,51 @@ export interface ApiResponse<T> {
   meta?: PaginationMeta;
   errors?: Record<string, string[]>;
 }
+
+export interface PricingTier {
+  name: string;
+  price: number;
+  currency: string;
+  interval: string;
+  description: string;
+  features: string[];
+  cta: string;
+  highlighted: boolean;
+}
+
+export interface AccountantProfile {
+  id: number;
+  name: string;
+  title: string;
+  bio: string;
+  rating: number;
+  avatar_url: string | null;
+}
+
+export interface SuccessStoryItem {
+  id: number;
+  client_name: string;
+  company: string;
+  quote: string;
+  rating: number;
+  avatar_url: string | null;
+}
+
+export interface ResourceArticle {
+  id: number;
+  title: string;
+  category: string;
+  excerpt: string;
+  author: string;
+  image_url: string | null;
+  published_at: string;
+}
+
+export interface CareerPosition {
+  id: number;
+  title: string;
+  department: string;
+  location: string;
+  type: string;
+  description: string;
+}
