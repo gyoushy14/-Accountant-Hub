@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Clear config cache so env vars are read fresh
+php artisan config:clear
+
 # Run migrations
 php artisan migrate --force
 
