@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\JobDetailResource;
 use App\Http\Resources\JobResource;
+use App\Models\Bid;
+use App\Models\Job;
 use App\Services\JobService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -44,14 +46,12 @@ class JobController extends Controller
             ], 404);
         }
 
-        if ($request->user()) {
-            $job->load(['userBid']);
-        }
+        $user = $request->user('sanctum');
 
         return response()->json([
             'success' => true,
             'message' => 'Job details retrieved.',
-            'data' => new JobDetailResource($job),
+            'data' => new JobDetailResource($job, $user),
         ]);
     }
 }

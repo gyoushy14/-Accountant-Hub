@@ -2,13 +2,30 @@
 
 namespace App\Http\Resources;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class JobDetailResource extends JsonResource
 {
+    private ?User $authUser;
+
+    public function __construct($resource, ?User $authUser = null)
+    {
+        parent::__construct($resource);
+        $this->authUser = $authUser;
+    }
+
     public function toArray(Request $request): array
     {
+        $userBid = null;
+        $hasApplied = false;
+
+        if ($this->authUser) {
+            $userBid = $this->bids->firstWhere('user_id', $this->authUser->id);
+            $hasApplied = $userBid !== null;
+        }
+
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -28,10 +45,8 @@ class JobDetailResource extends JsonResource
             'attachments' => $this->attachments,
             'posted_at' => $this->posted_at->diffForHumans(),
             'status' => $this->status,
-            'has_applied' => $this->relationLoaded('userBid') ? $this->userBid !== null : false,
-            'user_bid' => $this->relationLoaded('userBid') && $this->userBid
-                ? new BidResource($this->userBid)
-                : null,
+            'has_applied' => $hasApplied,
+            'user_bid' => $userBid ? new BidResource($userBid) : null,
         ];
     }
 }

@@ -10,7 +10,7 @@ class JobRepository implements JobRepositoryInterface
 {
     public function paginateWithFilters(array $filters): LengthAwarePaginator
     {
-        $query = Job::with('category');
+        $query = Job::with('category')->withCount('bids');
 
         if (!empty($filters['search'])) {
             $query->where('title', 'like', '%' . $filters['search'] . '%');
