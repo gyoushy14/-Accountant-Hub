@@ -1,39 +1,67 @@
-# Accountant Hub API
+# AccountantHUB
 
-A RESTful API backend for a freelance marketplace where companies post accounting jobs and accountants browse, view details, and submit bids.
+**GitHub**: https://github.com/gyoushy14/-Accountant-Hub  
+**Live Demo**: https://accountant-hub-app.vercel.app  
+**API Base URL**: https://accountant-hub-production-402f.up.railway.app/api/v1
+
+---
+
+## Test Credentials
+
+| Name             | Email                   | Password  |
+|------------------|-------------------------|-----------|
+| Accountant One   | jo23@gmail.com          | jo23@gmail.com  |
+
+Accountant Two has 3 sample bids already placed. Use these to log in and test bidding, My Bids, and other auth-protected features.
+
+---
+
+## Project Overview
+
+AccountantHUB is a full-stack freelance marketplace connecting businesses with accounting professionals. Companies post accounting jobs (bookkeeping, tax prep, auditing, financial analysis, payroll); accountants browse listings, view details, and submit bids. The backend uses Laravel 11 with a Repository-Service-Controller pattern and SQLite for zero-config setup. The frontend is a Next.js 14 App Router application with Tailwind CSS, server-side rendering for job detail pages, and static generation for marketing pages.
+
+### Main Features
+
+- Job listing with search, category/budget/status filters, and pagination
+- Job detail with required skills, client info, and bid status
+- Bid submission and a personal "My Bids" dashboard
+- Authentication (register, login, logout via Sanctum bearer tokens)
+- 7 marketing/informational pages: How It Works, Pricing, Categories, Top Accountants, Success Stories, Resources, About, Careers, Contact
+
+---
 
 ## Tech Stack
 
+### Backend
+
 - **Laravel 11** — PHP framework
-- **MySQL** — Database
-- **Laravel Sanctum** — Token-based API authentication
 - **PHP 8.2+**
+- **SQLite** — Database (no external DB server required)
+- **Laravel Sanctum** — Token-based API authentication
+- **Repository-Service-Controller** pattern with Form Requests and API Resources
 
-## Architecture
+### Frontend
 
-Clean **Repository-Service-Controller** pattern:
+- **Next.js 14** — App Router, TypeScript
+- **React 18**
+- **Tailwind CSS 3** — Custom design tokens (brand colors, shadows, typography)
+- **React Context API** — Auth state management
 
-- `app/Models/` — Eloquent models
-- `app/Repositories/{Entity}RepositoryInterface.php` + `app/Repositories/Eloquent/{Entity}Repository.php`
-- `app/Services/{Entity}Service.php` — business logic
-- `app/Http/Controllers/Api/{Entity}Controller.php` — thin request/response handling
-- `app/Http/Requests/` — Form Request validation
-- `app/Http/Resources/` — API Resource response formatting
-- `app/Providers/RepositoryServiceProvider.php` — binds interfaces to implementations
+---
 
-## Setup & Local Run
+## Setup Instructions
 
 ### Prerequisites
 
 - PHP 8.2 or higher
 - Composer
-- MySQL server
-- Node.js (optional, for frontend)
+- Node.js 18+
+- npm
 
-### Installation
+### Backend Setup
 
 ```bash
-# 1. Clone the repository
+# 1. Navigate to the backend directory
 cd accountant-hub
 
 # 2. Install PHP dependencies
@@ -42,21 +70,30 @@ composer install
 # 3. Copy environment file
 copy .env.example .env
 
-# 4. Configure .env — set your database credentials
-#    DB_CONNECTION=mysql
-#    DB_HOST=127.0.0.1
-#    DB_PORT=3306
-#    DB_DATABASE=accountant_hub
-#    DB_USERNAME=root
-#    DB_PASSWORD=
+# 4. Configure .env — the defaults use SQLite, so no DB server is needed.
+#    Key variables to review:
+#
+#    APP_NAME=AccountantHUB
+#    APP_ENV=local
+#    APP_KEY=           # will be generated in step 5
+#    APP_DEBUG=true
+#    APP_URL=http://localhost:8000
+#
+#    DB_CONNECTION=sqlite
+#
+#    SESSION_DRIVER=database
+#    CACHE_STORE=database
+#    QUEUE_CONNECTION=database
+#
+#    FRONTEND_URL=http://localhost:3000
 
-# 5. Create the database
-mysql -u root -e "CREATE DATABASE IF NOT EXISTS accountant_hub CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-
-# 6. Generate app key
+# 5. Generate app key
 php artisan key:generate
 
-# 7. Run migrations and seeders
+# 6. Create SQLite database file
+php -r "file_exists('database/database.sqlite') || touch('database/database.sqlite');"
+
+# 7. Run migrations and seeders (creates tables + demo data)
 php artisan migrate --seed
 
 # 8. Start the development server
@@ -65,37 +102,133 @@ php artisan serve
 # The API will be available at http://localhost:8000/api/v1
 ```
 
+### Frontend Setup
+
+```bash
+# 1. Navigate to the frontend directory
+cd accountant-hub/frontend
+
+# 2. Install dependencies
+npm install
+
+# 3. Create environment file
+echo "NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1" > .env.local
+
+# 4. Start dev server
+npm run dev
+
+# The app will be available at http://localhost:3000
+```
+
+### Environment Variables
+
+#### Backend (`.env`)
+
+| Variable             | Default                        | Description                          |
+|----------------------|--------------------------------|--------------------------------------|
+| `APP_NAME`           | `Laravel`                      | Application name                     |
+| `APP_ENV`            | `local`                        | Environment (`local`, `production`)  |
+| `APP_KEY`            | *(generated)*                  | Laravel app key (run `key:generate`) |
+| `APP_DEBUG`          | `true`                         | Debug mode                           |
+| `APP_URL`            | `http://localhost:8000`        | Application URL                      |
+| `DB_CONNECTION`      | `sqlite`                       | Database driver                      |
+| `SESSION_DRIVER`     | `database`                     | Session storage                      |
+| `CACHE_STORE`        | `database`                     | Cache backend                        |
+| `QUEUE_CONNECTION`   | `database`                     | Queue backend                        |
+| `FRONTEND_URL`       | `http://localhost:3000`        | Allowed CORS origin (frontend URL)   |
+| `LOG_CHANNEL`        | `stack`                        | Log channel                          |
+| `LOG_LEVEL`          | `debug`                        | Log level                            |
+
+#### Frontend (`.env.local`)
+
+| Variable               | Default                          | Description            |
+|------------------------|----------------------------------|------------------------|
+| `NEXT_PUBLIC_API_URL`  | `http://localhost:8000/api/v1`   | Backend API base URL   |
+
+---
+
+## How to Run Locally
+
+### Start the Backend
+
+```bash
+cd accountant-hub
+php artisan serve
+# → http://localhost:8000
+```
+
+### Run Migrations and Seeders (for demo data)
+
+```bash
+cd accountant-hub
+php artisan migrate --seed
+```
+
+This creates:
+- 2 test users (Accountant One, Accountant Two)
+- 5 job categories
+- 12 sample jobs
+- 3 sample bids
+- 6 accountant profiles
+- 4 success stories
+- 4 resource articles
+- 3 career positions
+
+### Start the Frontend
+
+```bash
+cd accountant-hub/frontend
+npm run dev
+# → http://localhost:3000
+```
+
+### Production Build
+
+```bash
+cd accountant-hub/frontend
+npm run build
+npm run start
+```
+
+---
+
 ## API Endpoints
 
-All endpoints are prefixed with `/api/v1` and throttled at 60 requests per minute.
+All endpoints are prefixed with `/api/v1` and throttled at 60 requests per minute.  
+Auth-protected endpoints require an `Authorization: Bearer {token}` header.
 
-### Authentication
+| Method | Route                         | Auth     | Description                       |
+|--------|-------------------------------|----------|-----------------------------------|
+| POST   | `/api/v1/auth/register`       | No       | Create a new account              |
+| POST   | `/api/v1/auth/login`          | No       | Log in and receive a token        |
+| POST   | `/api/v1/auth/logout`         | Yes      | Revoke current token              |
+| GET    | `/api/v1/auth/me`             | Yes      | Get authenticated user info       |
+| GET    | `/api/v1/categories`          | No       | List all job categories           |
+| GET    | `/api/v1/jobs`                | No       | List jobs (paginated, filterable) |
+| GET    | `/api/v1/jobs/{id}`           | Optional | Get job detail (+ has_applied)    |
+| POST   | `/api/v1/jobs/{id}/bids`      | Yes      | Submit a bid on a job             |
+| GET    | `/api/v1/my-bids`             | Yes      | List current user's bids          |
+| GET    | `/api/v1/pricing`             | No       | Get pricing tiers                 |
+| GET    | `/api/v1/accountants/top`     | No       | Get featured accountant profiles  |
+| GET    | `/api/v1/success-stories`     | No       | Get client testimonials           |
+| GET    | `/api/v1/resources`           | No       | Get resource articles             |
+| GET    | `/api/v1/careers`             | No       | Get open job positions            |
+| POST   | `/api/v1/contact`             | No       | Submit a contact message          |
 
-#### Register
-```http
-POST /api/v1/auth/register
-Content-Type: application/json
+### Query Parameters for `GET /api/v1/jobs`
 
-{
-    "name": "John Doe",
-    "email": "john@example.com",
-    "password": "password",
-    "password_confirmation": "password"
-}
-```
-Response `201`:
-```json
-{
-    "success": true,
-    "message": "Account created successfully.",
-    "data": {
-        "user": { "id": 1, "name": "John Doe", "email": "john@example.com" },
-        "token": "1|abc123..."
-    }
-}
-```
+| Param        | Type   | Description                          |
+|--------------|--------|--------------------------------------|
+| `search`     | string | Search by job title                  |
+| `category_id`| int    | Filter by category ID                |
+| `budget_min` | number | Minimum budget filter                |
+| `budget_max` | number | Maximum budget filter                |
+| `sort`       | string | `newest` (default) or `highest_budget` |
+| `status`     | string | `open` or `closed`                   |
+| `page`       | int    | Page number (12 items per page)      |
 
-#### Login
+### Example: Login
+
 ```http
 POST /api/v1/auth/login
 Content-Type: application/json
@@ -105,6 +238,7 @@ Content-Type: application/json
     "password": "password"
 }
 ```
+
 Response `200`:
 ```json
 {
@@ -112,139 +246,16 @@ Response `200`:
     "message": "Logged in successfully.",
     "data": {
         "user": { "id": 1, "name": "Accountant One", "email": "accountant1@test.com" },
-        "token": "2|xyz789..."
+        "token": "2|abc123..."
     }
 }
 ```
 
-#### Logout
-```http
-POST /api/v1/auth/logout
-Authorization: Bearer {token}
-```
-Response `200`:
-```json
-{ "success": true, "message": "Logged out successfully." }
-```
-
-#### Get Current User
-```http
-GET /api/v1/auth/me
-Authorization: Bearer {token}
-```
-Response `200`:
-```json
-{
-    "success": true,
-    "message": "Current user retrieved.",
-    "data": { "id": 1, "name": "Accountant One", "email": "accountant1@test.com" }
-}
-```
-
-### Job Categories
+### Example: Submit a Bid
 
 ```http
-GET /api/v1/categories
-```
-Response `200`:
-```json
-{
-    "success": true,
-    "message": "Categories retrieved.",
-    "data": [
-        { "id": 1, "name": "Bookkeeping", "slug": "bookkeeping" },
-        { "id": 2, "name": "Tax Preparation", "slug": "tax-preparation" },
-        { "id": 3, "name": "Auditing", "slug": "auditing" },
-        { "id": 4, "name": "Financial Analysis", "slug": "financial-analysis" },
-        { "id": 5, "name": "Payroll Management", "slug": "payroll-management" }
-    ]
-}
-```
-
-### Jobs
-
-#### List Jobs
-```http
-GET /api/v1/jobs?page=1&search=bookkeeping&category_id=1&budget_min=500&budget_max=5000&sort=newest&status=open
-```
-
-| Query Param   | Type   | Description                          |
-|---------------|--------|--------------------------------------|
-| search        | string | Search by job title                  |
-| category_id   | int    | Filter by category                   |
-| budget_min    | number | Minimum budget                       |
-| budget_max    | number | Maximum budget                       |
-| sort          | string | `newest` (default) or `highest_budget` |
-| status        | string | `open` or `closed`                   |
-| page          | int    | Page number for pagination           |
-
-Response `200`:
-```json
-{
-    "success": true,
-    "message": "Jobs retrieved.",
-    "data": [
-        {
-            "id": 1,
-            "title": "Monthly Bookkeeping for E-commerce Store",
-            "client_name": "Shopify Solutions Inc.",
-            "short_description": "Handle monthly bookkeeping for a fast-growing e-commerce business.",
-            "budget_min": 800,
-            "budget_max": 1500,
-            "deadline": "2026-07-15",
-            "category": { "id": 1, "name": "Bookkeeping" },
-            "bids_count": 1,
-            "posted_at": "2 weeks ago",
-            "status": "open"
-        }
-    ],
-    "meta": {
-        "current_page": 1,
-        "last_page": 1,
-        "per_page": 12,
-        "total": 1
-    }
-}
-```
-
-#### Get Job Detail
-```http
-GET /api/v1/jobs/{id}
-Authorization: Bearer {token} (optional)
-```
-Response `200`:
-```json
-{
-    "success": true,
-    "message": "Job details retrieved.",
-    "data": {
-        "id": 1,
-        "title": "Monthly Bookkeeping for E-commerce Store",
-        "client_name": "Shopify Solutions Inc.",
-        "description": "We need a detail-oriented accountant...",
-        "short_description": "Handle monthly bookkeeping...",
-        "budget_min": 800,
-        "budget_max": 1500,
-        "deadline": "2026-07-15",
-        "required_skills": ["QuickBooks", "Bank Reconciliation", "Accounts Payable", "Excel"],
-        "delivery_time": "Monthly recurring",
-        "category": { "id": 1, "name": "Bookkeeping" },
-        "bids_count": 1,
-        "attachments": null,
-        "posted_at": "2 weeks ago",
-        "status": "open",
-        "has_applied": false,
-        "user_bid": null
-    }
-}
-```
-
-### Bids
-
-#### Submit a Bid
-```http
-POST /api/v1/jobs/{id}/bids
-Authorization: Bearer {token}
+POST /api/v1/jobs/1/bids
+Authorization: Bearer 2|abc123...
 Content-Type: application/json
 
 {
@@ -254,79 +265,124 @@ Content-Type: application/json
     "experience_summary": "5 years experience with QuickBooks..."
 }
 ```
-Response `201`:
+
+### Error Response Format
+
+All errors return:
 ```json
 {
-    "success": true,
-    "message": "Bid submitted successfully.",
-    "data": {
-        "id": 4,
-        "proposed_price": 950,
-        "estimated_delivery_time": "Monthly",
-        "cover_letter": "I have extensive experience...",
-        "experience_summary": "5 years experience...",
-        "created_at": "2026-06-13T14:45:00.000000Z",
-        "job": { "id": 1, "title": "Monthly Bookkeeping...", "status": "open", "client_name": "Shopify Solutions Inc." },
-        "user": { "id": 1, "name": "Accountant One" }
-    }
+    "success": false,
+    "message": "Error description."
 }
 ```
 
-Error responses:
-- `409` — Duplicate bid (`"You have already submitted a bid for this job."`)
-- `409` — Closed job (`"This job is closed for bidding."`)
-- `422` — Validation errors
+Common HTTP status codes: `201` (created), `409` (duplicate/conflict), `422` (validation), `401` (unauthenticated).
 
-#### My Bids
-```http
-GET /api/v1/my-bids
-Authorization: Bearer {token}
+---
+
+## Frontend Routes
+
+| Route                     | Auth | Type     | Description                             |
+|---------------------------|------|----------|-----------------------------------------|
+| `/`                       | No   | Static   | Job listing with search, filters        |
+| `/login`                  | No   | Static   | Login page (redirect support)           |
+| `/register`               | No   | Static   | Registration page                       |
+| `/my-bids`                | Yes  | Static   | Dashboard — bids with pagination        |
+| `/jobs/[slug]`            | No   | Dynamic  | Job detail (skills, sidebar summary)    |
+| `/jobs/[slug]/bid`        | Yes  | Dynamic  | Bid submission form                     |
+| `/how-it-works`           | No   | Static   | Step-by-step platform guide             |
+| `/pricing`                | No   | Static   | Three pricing tiers from API            |
+| `/categories`             | No   | Static   | Category grid with job counts           |
+| `/accountants`            | No   | Static   | Top accountant profiles with ratings    |
+| `/success-stories`        | No   | Static   | Client testimonials with star ratings   |
+| `/resources`              | No   | Static   | Articles and guides                     |
+| `/about`                  | No   | Static   | Mission, stats, team                    |
+| `/careers`                | No   | Static   | Open positions with descriptions        |
+| `/contact`                | No   | Static   | Contact form with success state         |
+
+---
+
+## Project Structure
+
+### Backend (`accountant-hub/`)
+
 ```
-Response `200`:
-```json
-{
-    "success": true,
-    "message": "Your bids retrieved.",
-    "data": [
-        {
-            "id": 1,
-            "proposed_price": 1100,
-            "estimated_delivery_time": "Monthly recurring",
-            "cover_letter": "I have 5 years of experience...",
-            "experience_summary": "5 years of bookkeeping experience...",
-            "created_at": "2026-06-13T14:30:00.000000Z",
-            "job": {
-                "id": 1,
-                "title": "Monthly Bookkeeping for E-commerce Store",
-                "status": "open",
-                "client_name": "Shopify Solutions Inc."
-            }
-        }
-    ],
-    "meta": {
-        "current_page": 1,
-        "last_page": 1,
-        "per_page": 12,
-        "total": 3
-    }
-}
+app/
+├── Http/
+│   ├── Controllers/Api/   # 10 controllers (Auth, Job, Bid, JobCategory, Pricing, Accountant, SuccessStory, Resource, Career, Contact)
+│   ├── Requests/           # Form Request validation classes
+│   └── Resources/         # API Resource response transformers
+├── Models/                 # 9 Eloquent models (User, Job, Bid, JobCategory, Accountant, SuccessStory, Resource, Career, ContactMessage)
+├── Providers/              # RepositoryServiceProvider (binds interfaces → implementations)
+├── Repositories/
+│   ├── Contracts/          # Repository interfaces
+│   └── Eloquent/           # Repository implementations
+└── Services/               # Business logic layer
+database/
+├── migrations/             # 10 migration files
+└── seeders/                # 8 seeders (User, JobCategory, Job, Bid, Accountant, SuccessStory, Resource, Career)
+routes/
+└── api.php                 # All 15 API endpoint definitions
+config/
+├── cors.php                # CORS configuration (reads FRONTEND_URL env var)
+└── sanctum.php             # Sanctum authentication settings
 ```
 
-## Test Accountants
+### Frontend (`accountant-hub/frontend/`)
 
-| Name             | Email                   | Password  |
-|------------------|-------------------------|-----------|
-| Accountant One   | accountant1@test.com    | password  |
-| Accountant Two   | accountant2@test.com    | password  |
+```
+app/                    # Next.js App Router (15 page routes)
+components/             # 14 reusable UI components (Badge, Button, Input, Textarea, JobCard, EmptyState, FilterSidebar, SearchInput, Pagination, RangeSlider, ProjectSummaryCard, Navbar, Footer, BottomTabBar)
+lib/
+├── api.ts              # API client (fetch wrapper, auto-auth header, all endpoint functions)
+└── auth-context.tsx    # Auth state via React Context (useAuth hook)
+types/
+└── index.ts            # TypeScript interfaces
+```
 
-Accountant Two has 3 sample bids already placed.
+---
+
+## Deployment
+
+### Backend (Railway)
+
+The backend is deployed on Railway at https://accountant-hub-production-402f.up.railway.app.
+
+1. Push to GitHub
+2. Create a new Railway project → Deploy from GitHub
+3. Set **Root Directory** to `accountant-hub`
+4. Env vars to set:
+   - `APP_KEY` — run `php artisan key:generate --show` locally
+   - `APP_ENV` → `production`
+   - `APP_DEBUG` → `false`
+   - `FRONTEND_URL` → your Vercel URL (e.g. `https://accountant-hub-app.vercel.app`)
+   - `SESSION_DRIVER` → `file`
+   - `CACHE_STORE` → `file`
+   - `QUEUE_CONNECTION` → `sync`
+   - `LOG_CHANNEL` → `stderr`
+   - `LOG_LEVEL` → `warning`
+
+### Frontend (Vercel)
+
+The frontend is deployed on Vercel at https://accountant-hub-app.vercel.app.
+
+1. Push to GitHub
+2. Import project in Vercel
+3. Set **Root Directory** to `accountant-hub/frontend`
+4. Env var: `NEXT_PUBLIC_API_URL` → `https://your-backend-url.com/api/v1`
+
+---
 
 ## Assumptions
 
-- No separate "role" or "accountant" model — the built-in `users` table serves as accountants.
-- File attachments are represented as placeholder JSON arrays (no actual file uploads for MVP).
-- The queue `jobs` table was renamed to `queue_jobs` to avoid conflict with the accounting jobs table.
-- Pagination is set to 12 items per page.
+- No separate "role" column — the `users` table serves as accountants. Any registered user can browse jobs and submit bids.
+- File attachments are placeholder JSON arrays (no file uploads for MVP).
+- The Laravel queue `jobs` table was renamed to `queue_jobs` to avoid collision with the accounting jobs table.
+- Pagination is 12 items per page for both job listings and bid listings.
 - Jobs are sorted by `posted_at` descending by default.
-- The `has_applied` field on job detail only works when the user is authenticated (otherwise `false`).
-- CORS allows the origin defined in `FRONTEND_URL` env variable (default `http://localhost:3000`).
+- `has_applied` on job detail is `false` when the user is unauthenticated; it reflects actual bid status when logged in.
+- Pricing tiers are hardcoded (no DB table) since they are static config, not user-managed content.
+- `disputed` badge variant exists in the frontend but is not used by the API (job status is `open` or `closed`).
+- Categories page computes job counts client-side by fetching all jobs, avoiding a dedicated count endpoint.
+- The contact form sends to the `/api/v1/contact` endpoint and shows a success message on completion (no redirect).
+- CORS is configured via the `FRONTEND_URL` environment variable and defaults to `http://localhost:3000`.
